@@ -1,0 +1,146 @@
+---
+title: 'Visuals - Rio De Janeiro Tourist Data'
+author: "Samruddha Pophli"
+date: '2022-06-16'
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Tourist Arrivals in Rio de Janeiro between 2006 and 2019
+
+This Dataset contains information about the number of tourists that visited the city of Rio de Janeiro (Brazil) by means of Airways or Seaways from the different parts (country) of the world between year 2006 to 2019. Source of the Data is 'Rio.com' and the data is collected and managed by the government of 'Rio De Janeiro'. 
+
+The Dataset can be used to predict the number of Tourist that may arrive to Rio De Janeiro in the years to come based on the historical data given in the dataset.The dataset can also be used to define tourism promotions strategies to promote Rio De Janeiro. 
+It can be also used by the Travels & Tourism Companies to design travel packages for the ones travelling to Rio de Janeiro from the different parts of the world. 
+
+The data is well-structured and available in the CSV format. 
+
+Following are the columns in the dataset: 
+País: (Country),
+Total: (Total Number of Tourists arrived),
+Aérea: (Number of Tourists arrived by Air),
+Marítima: (Number of Tourists arrived by Sea),
+Região: (Continent Region),
+Continente: (Continent),
+Ano: (Year).
+
+As the dataset is in csv format, I am going to use read_csv function to open it. 
+
+```{r loadpackages, include = FALSE}
+
+#loading the package library
+library(kableExtra)
+library(tidyverse)
+library(knitr)
+```
+
+```{r rioData, include = FALSE}
+
+#As the dataset is in csv format, using the read_csv function that comes from the tidyverse package to open the dataset in R. 
+
+rio_dataset <- read_csv("~/Desktop/tourists-rj-2006-2019.csv")
+
+
+#assigning the dataset to a dataframe object 'rio_df'
+rio_df <- data_frame(rio_dataset)
+
+```
+
+
+
+```{r data-cleaning, echo = FALSE}
+
+#The column names are written in portugese language. Renaming the Column Names to English using colnames function: 
+colnames(rio_df) <- c('Country', 'Total', 'Airways', 'Seaways', 'Region', 'Continent', 'Year')
+
+#droping the Column 'Region' and 'Continent' from the Dataframe object
+#rio_df = subset(rio_df, select = -c(Region,Continent))
+```
+
+#### **DataSet Info:**
+This Dataset has `r nrow(rio_df)` rows and `r ncol(rio_df)` columns. The names of the columns and a brief description of each are in the table below:
+
+**Note:**The Dataset does not includes the number of Tourist that may have visitied 'Rio De Janeiro' via Roadways. 
+```{r col-dscrptn, echo=FALSE} 
+
+text_tbl <- data.frame(
+  ColumnName = c('Country', 'Total', 'Airways', 'Seaways', 'Region', 'Continent', 'Year'),
+  Description = c(
+    "Country Name: Where the Tourist came from ",
+    "The Total Number of Tourist arrived to Rio ", 
+    "Tourist arrived to Rio via Airways ", "Tourist arrived to Rio via Seaways ", "Region from where the Tourist belonged", "Continent from where the Tourist belonged", "Year when the tourists arrived. "
+  )
+)
+kbl(text_tbl) %>%
+  kable_paper(full_width = F) %>%
+  column_spec(1, bold = T, border_right = T) %>%
+  column_spec(2, width = "30em", background = "")
+```
+
+```{r inline-text1, echo = FALSE}
+#This next chunk is inline code. Inline code puts the text with the output of the function in the document.
+```
+
+#### **Summary:** 
+```{r rio-summary, echo = FALSE} 
+#dropping Column 'Counntry' and 'Year' from the rio_df and assigning to new data frame object
+rio_summary = subset(rio_df) #select = -c(Country,Year))
+#Summary for the Columns Total, Airways, Seaways are below:
+summary(rio_summary)
+```
+```{r inline-text2, echo = FALSE}
+#This next chunk is inline code. Inline code puts the text with the output of the function in the document.
+```
+
+#### _**Visual 1:**_ 
+Bar Chart below showing the number of Tourist visited Rio De Janeiro in 2019: 
+```{r rio-plots, echo = FALSE} 
+
+rio_2019 <- rio_df[rio_df$Year == '2019', ] #filtering the data based on the year 2019
+rio_2019 <- arrange(rio_2019, desc(Total)) #arranging the data in the descending order
+
+rio_2019%>%
+  top_n(10, Total)%>% #picking the top 10 rows based on the Airways
+  ggplot(aes(x = Country, y = Total)) + 
+  geom_bar(stat = "identity")+
+  coord_flip()+
+  geom_text(aes(label = Total), size = 3, hjust = 1, vjust = 1)+
+  xlab("Countries") +
+  ylab("Tourist Arrived in Rio De Janeiro in year 2019") + 
+  ggtitle("Tourist visiting Rio De Janeiro in 2019") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.title.x = element_text(color = "black", face = "bold"),
+        axis.title.y = element_text(color = "black", face = "bold"),
+        plot.title = element_text(color = "blue", face = "bold.italic", hjust = 0))
+```
+
+```{r inline-text3, echo = FALSE}
+#This next chunk is inline code. Inline code puts the text with the output of the function in the document.
+```
+The above bar chart shows the total number of tourist that visited 'Rio De Janeiro, Brazil' in the year 2019 via Airways or Seaways. The Chart displays the Top 10 Countries from where 'Rio De Janeiro' had the most tourist in the year 2019. The City of Brazil had the most tourist from Argentina with somewhere around '405301' visiting it in year 2019.  
+
+
+
+
+#### _**Visual 2:**_ 
+The Scatter plot below shows the data around the number of Tourist visited Rio De Janerio between year 2006 and 2019 from the different parts of the world. 
+
+```{r rio-plots2, echo = FALSE}
+x <- rio_df$Year
+y <- rio_df$Total
+# Plot with main and axis titles
+# Change point shape (pch = 19) and remove frame.
+plot(x, y, main = "Main title",
+     xlab = "X axis title", ylab = "Y axis title",
+     pch = 1, frame = FALSE)
+```
+```{r inline-text4, echo = FALSE}
+#This next chunk is inline code. Inline code puts the text with the output of the function in the document.
+```
+The above scatter plot shows the total number of tourist that visited 'Rio De Janeiro, Brazil' from year 2006 to year 2019 via Airways or Seaways. The plot displays the `r nrow(rio_df)` rows data against the year. From the above chart, it can be noticed that the number of tourist visiting *'Rio De Janeiro'* were at peak in year 2017 & 2018 and then dropping some in the year 2019. Overall, the growth in number of tourist over the years indicates that the City of Brazil is indeed becoming popular.
