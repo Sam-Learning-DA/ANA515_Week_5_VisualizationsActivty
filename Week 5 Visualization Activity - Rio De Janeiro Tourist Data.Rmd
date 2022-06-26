@@ -136,8 +136,8 @@ x <- rio_df$Year
 y <- rio_df$Total
 # Plot with main and axis titles
 # Change point shape (pch = 19) and remove frame.
-plot(x, y, main = "Main title",
-     xlab = "X axis title", ylab = "Y axis title",
+plot(x, y, main = "Tourist visiting Rio De Janeiro Between Year 2006 and 2019",
+     xlab = "Year", ylab = "The Number of Tourist",
      pch = 1, frame = FALSE)
 ```
 ```{r inline-text4, echo = FALSE}
